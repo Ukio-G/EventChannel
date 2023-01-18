@@ -4,55 +4,41 @@
 #include <algorithm>
 #include <numeric>
 
+Subscriber::Ptr subscriber;
 
-EventChannel* EventChannel::_instance = nullptr;
-std::vector<Subscriber::Ptr> subscibers;
-void f()
-{
-	EventChannel::getInstance().publish("makeSum", std::vector<int>{1,2,3});
+void f() {
+	EventChannel::getInstance().publish("PublishNumbers", std::vector<int>{1,2,3,4});
 }
 
-
-void g()
-{
-	EventChannel::getInstance().publish("printerElements", std::vector<int>{1,2,3});
-}
-
-
-void createIntegerHandlers()
-{
-	NewSharedSubscriber(integer_manipulator)
-	subscibers.push_back(integer_manipulator);
-
+void createIntegerHandlers() {
+	subscriber = Subscriber::create("IntegerSubscriber");
+	EventChannel::getInstance().subscribe("PublishNumbers", subscriber);
 	// Create handlers for multiple topics
-	integer_manipulator->newAction("makeSum", [](Subscriber::ActionArgument argument) {
+ 	subscriber->addActionToTopic("PublishNumbers", "makeSum", [](Subscriber::ActionArgument argument) {
 		std::vector<int> data = std::any_cast<std::vector<int>>(argument);
 		std::cout << "makeSum result = " << std::accumulate(data.begin(), data.end(), 0)<< std::endl;
 	});
 
-	integer_manipulator->newAction("printerElements", [](Subscriber::ActionArgument argument) {
+	subscriber->addActionToTopic("PublishNumbers", "printerElements" ,[](Subscriber::ActionArgument argument) {
 		std::vector<int> data = std::any_cast<std::vector<int>>(argument);
 		for (auto &item : data)
-			std::cout << "item " <<item << std::endl;
+			std::cout << "item " << item << std::endl;
 	});
-
-
-	// Subscribe one subscriber object to multiple topics
-	EventChannel::getInstance().subscribe("makeSum", integer_manipulator);
-	EventChannel::getInstance().subscribe("printerElements", integer_manipulator);
 }
 
-int main()
-{
+int main() {
 	createIntegerHandlers();
 
 	f();
-	g();
-
-	EventChannel::getInstance().unsubscribe("printerElements", subscibers.back());
+	sleep(1);
+	subscriber->removeActionFromTopic("PublishNumbers", "printerElements");
 
 	f();
-	g();	// No effect after unsubscribe
+	// EventChannel::getInstance().unsubscribe("PublishNumbers");
+
+	f();
+
+	sleep(5);
 
 	return 0;
 }
