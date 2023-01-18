@@ -19,7 +19,10 @@ public:
 	EventLoop() = default;
 	EventLoop(const EventLoop&) = delete;
 	EventLoop(EventLoop&&) noexcept = delete;
-	~EventLoop() = default;
+	~EventLoop() {
+		stop();
+		mThread.join();
+	};
 
 	std::vector<function_type>	mFunctions;
 	std::vector<function_type>	mFunctionsRegular;
