@@ -29,16 +29,18 @@ void createIntegerHandlers() {
 int main() {
 	createIntegerHandlers();
 
+	// All subscribed actions will trigger
 	f();
-	sleep(1);
+	sleep(2);
+
+	// Only makeSum actions will trigger
 	subscriber->removeActionFromTopic("PublishNumbers", "printerElements");
-
-	f();
-	// EventChannel::getInstance().unsubscribe("PublishNumbers");
-
 	f();
 
-	sleep(5);
+	// No subscriber available for PublishNumbers topic -> no actions will trigger
+	EventChannel::getInstance().unsubscribe("PublishNumbers", subscriber);
+	f();
 
+	sleep(2);
 	return 0;
 }
