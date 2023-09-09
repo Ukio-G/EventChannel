@@ -1,5 +1,5 @@
 #include <iostream>
-#include "EventChannel.h"
+#include "EventChannel.hpp"
 #include <vector>
 #include <algorithm>
 #include <numeric>
