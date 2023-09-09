@@ -66,6 +66,10 @@ public:
 		topic.newAction(action_name, std::move(action_function));
 	}
 
+	void addActionToTopic(const std::string & topic_name, ActionsType action_function) {
+		addActionToTopic(topic_name, topic_name, std::move(action_function));
+	}
+
 	void removeActionFromTopic(const std::string & topic_name, const std::string & action_name) {
 		if (_topics.find(topic_name) != _topics.end()) {
 			auto & topic = _topics[topic_name];
