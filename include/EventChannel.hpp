@@ -9,6 +9,7 @@
 #include <functional>
 #include <memory>
 #include <optional>
+#include <algorithm>
 #include "EventLoop.hpp"
 
 class EventChannel;
